@@ -1,4 +1,4 @@
-package org.vr.rest;
+package org.vr.messenger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
