@@ -8,14 +8,16 @@ import java.util.Date;
 public class Profile {
     private long id;
     private String profileName;
+    private String role;
     private Date created;
 
     public Profile() {
     }
 
-    public Profile(long id, String profileName) {
+    public Profile(long id, String profileName, String role) {
         this.id = id;
         this.profileName = profileName;
+        this.role = role;
     }
 
     public long getId() {
@@ -40,5 +42,13 @@ public class Profile {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

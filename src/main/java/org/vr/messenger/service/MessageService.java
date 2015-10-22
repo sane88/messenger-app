@@ -14,6 +14,11 @@ public class MessageService {
 
     private Map<Long, Message> messages = DatabaseMock.getMessages();
 
+    public MessageService() {
+        messages.put(1l, new Message(1l, "Hello World!", "Author"));
+        messages.put(2l, new Message(2l, "Hello Jersey!", "Author"));
+    }
+
     public List<Message> getAllMessages(){
         return new ArrayList<>(messages.values());
     }
