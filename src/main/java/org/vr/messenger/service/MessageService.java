@@ -5,10 +5,7 @@ import org.vr.messenger.database.DatabaseMock;
 import org.vr.messenger.model.Message;
 
 import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MessageService {
 
@@ -21,6 +18,23 @@ public class MessageService {
 
     public List<Message> getAllMessages(){
         return new ArrayList<>(messages.values());
+    }
+
+    public List<Message> getMessagesForYear(int year){
+        List<Message> result = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        for (Message message : messages.values()) {
+            calendar.setTime(message.getCreated());
+            if (calendar.get(Calendar.YEAR) == year) {
+                result.add(message);
+            }
+        }
+        return result;
+    }
+
+    public List<Message> getMessagesPaginated(int start, int size){
+        List<Message> result = new ArrayList<>(messages.values());
+        return result.subList(start, start + size);
     }
 
     public Message getMessage(long id){

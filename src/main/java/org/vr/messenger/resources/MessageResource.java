@@ -1,10 +1,14 @@
 package org.vr.messenger.resources;
 
 import org.vr.messenger.model.Message;
+import org.vr.messenger.resources.beans.MessageFilterBean;
 import org.vr.messenger.service.MessageService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Path("/messages")
@@ -15,7 +19,13 @@ public class MessageResource {
     private MessageService service = new MessageService();
 
     @GET
-   public List<Message> getMessages(){
+   public List<Message> getMessages(@BeanParam MessageFilterBean bean){
+        if(bean.getYear() > 0) {
+            return service.getMessagesForYear(bean.getYear());
+        }
+        if (bean.getStart() >= 0 && bean.getSize() > 0) {
+            return service.getMessagesPaginated(bean.getStart(), bean.getSize());
+        }
        return service.getAllMessages();
    }
 
@@ -26,8 +36,11 @@ public class MessageResource {
     }
 
     @POST
-    public Message addMessage(Message message){
-        return service.addMessage(message);
+    public Response addMessage(Message message){
+        Message newMessage = service.addMessage(message);
+        return Response.status(Response.Status.CREATED)
+                .entity(newMessage)
+                .build();
     }
 
     @PUT
@@ -41,6 +54,11 @@ public class MessageResource {
     @Path("/{messageId}")
     public void removeMessage(@PathParam("messageId")long id) {
         service.removeMessage(id);
+    }
+
+    @Path("{messageId}/comments")
+    public CommentResource getCommentResource(){
+        return new CommentResource();
     }
 
 }
