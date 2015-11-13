@@ -5,8 +5,11 @@ import org.vr.messenger.resources.beans.MessageFilterBean;
 import org.vr.messenger.service.MessageService;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -36,9 +39,10 @@ public class MessageResource {
     }
 
     @POST
-    public Response addMessage(Message message){
+    public Response addMessage(Message message, @Context UriInfo uriInfo){
         Message newMessage = service.addMessage(message);
-        return Response.status(Response.Status.CREATED)
+        URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newMessage.getId())).build();
+        return Response.created(uri)
                 .entity(newMessage)
                 .build();
     }

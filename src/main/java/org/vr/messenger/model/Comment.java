@@ -1,13 +1,18 @@
 package org.vr.messenger.model;
 
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@XmlRootElement
 public class Comment {
     private long id;
     private String message;
     private Date created;
     private String author;
+
+    public Comment() {
+    }
 
     public Comment(long id, String message, String author) {
         this.id = id;
