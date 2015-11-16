@@ -15,8 +15,8 @@ import java.util.Calendar;
 import java.util.List;
 
 @Path("/messages")
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Produces(value = {MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
 public class MessageResource {
 
     private MessageService service = new MessageService();
@@ -34,8 +34,12 @@ public class MessageResource {
 
     @GET
     @Path("/{messageId}")
-    public Message getMessage(@PathParam("messageId")long id) {
-        return service.getMessage(id);
+    public Message getMessage(@PathParam("messageId")long id, @Context UriInfo uriInfo) {
+        Message message = service.getMessage(id);
+        message.addLink(getUrlForSelf(uriInfo, message), "self");
+        message.addLink(getUrlForProfile(uriInfo, message), "profile");
+        message.addLink(getUrlForComments(uriInfo, message), "comments");
+        return message;
     }
 
     @POST
@@ -63,6 +67,32 @@ public class MessageResource {
     @Path("{messageId}/comments")
     public CommentResource getCommentResource(){
         return new CommentResource();
+    }
+
+    private String getUrlForSelf(UriInfo uriInfo, Message message) {
+        return uriInfo.getBaseUriBuilder()
+                .path(MessageResource.class)
+                .path(Long.toString(message.getId()))
+                .build()
+                .toString();
+    }
+
+    private String getUrlForProfile(UriInfo uriInfo, Message message){
+        return uriInfo.getBaseUriBuilder()
+                .path(ProfileResource.class)
+                .path(message.getAuthor())
+                .build()
+                .toString();
+    }
+
+    private String getUrlForComments(UriInfo uriInfo, Message message) {
+        return uriInfo.getBaseUriBuilder()
+                .path(MessageResource.class)
+                .path(MessageResource.class, "getCommentResource")
+                .resolveTemplate("messageId", message.getId())
+                .path(CommentResource.class)
+                .build()
+                .toString();
     }
 
 }
